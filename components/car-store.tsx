@@ -7,8 +7,8 @@ import { supabase } from "@/lib/supabase"
 type CarStore = {
   cars: Car[]
   ready: boolean
-  addCar: (car: Omit<Car, "id" | "createdAt">, imageFiles?: File[]) => Promise<void>
-  updateCar: (id: string, car: Omit<Car, "id" | "createdAt">, imageFiles?: File[]) => Promise<void>
+  addCar: (car: any, imageFiles?: any) => Promise<void>
+  updateCar: (id: string, car: any, imageFiles?: any) => Promise<void>
   deleteCar: (id: string) => Promise<void>
 }
 
@@ -18,7 +18,6 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
   const [cars, setCars] = useState<Car[]>([])
   const [ready, setReady] = useState(false)
 
-  // Lexo veturat nga Supabase (tabela dionicars)
   const fetchCars = async () => {
     try {
       const { data, error } = await supabase
@@ -52,10 +51,12 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
     fetchCars()
   }, [])
 
-  // Ngarko fotot te bucket-i dioni-images
-  const uploadImages = async (files: File[]): Promise<string[]> => {
+  const uploadImages = async (files: any[]): Promise<string[]> => {
     let imageUrls: string[] = []
+    if (!files || !Array.isArray(files)) return imageUrls
+
     for (let file of files) {
+      if (!(file instanceof File)) continue
       const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`
       const { error } = await supabase.storage
         .from("dioni-images")
@@ -77,7 +78,6 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
     return imageUrls
   }
 
-  // Shto veturë të re
   const addCar: CarStore["addCar"] = async (carData, imageFiles = []) => {
     try {
       let newImageUrls = carData.images || []
@@ -95,7 +95,7 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
             km: carData.km,
             year: carData.year,
             engine: carData.engine,
-            desc: carData.desc,
+            desc: carData.desc || carData.description || "",
             images: newImageUrls,
           },
         ])
@@ -111,7 +111,6 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Përditëso veturën
   const updateCar: CarStore["updateCar"] = async (id, carData, imageFiles = []) => {
     try {
       let existingImages = carData.images || []
@@ -128,7 +127,7 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
           km: carData.km,
           year: carData.year,
           engine: carData.engine,
-          desc: carData.desc,
+          desc: carData.desc || carData.description || "",
           images: existingImages,
         })
         .eq("id", id)
@@ -141,7 +140,6 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Fshi veturën
   const deleteCar: CarStore["deleteCar"] = async (id) => {
     try {
       const { error } = await supabase
