@@ -1,8 +1,19 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
-import { type Car } from "@/lib/cars"
 import { supabase } from "@/lib/supabase"
+
+type Car = {
+  id: string
+  title: string
+  price: string
+  km: string
+  year: string
+  engine: string
+  desc?: string
+  images: string[]
+  createdAt: number
+}
 
 type CarStore = {
   cars: Car[]
@@ -41,7 +52,7 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
         setCars(formattedCars)
       }
     } catch (err) {
-      console.error("Gabim gjatë leximit të veturave:", err)
+      console.error("Gabim gjatë leximit:", err)
     } finally {
       setReady(true)
     }
@@ -62,10 +73,7 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
         .from("dioni-images")
         .upload(fileName, file)
 
-      if (error) {
-        console.error("Gabim te upload i fotos:", error.message)
-        continue
-      }
+      if (error) continue
 
       const { data: publicUrlData } = supabase.storage
         .from("dioni-images")
@@ -86,7 +94,7 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
         newImageUrls = [...newImageUrls, ...uploaded]
       }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("dionicars")
         .insert([
           {
@@ -99,15 +107,12 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
             images: newImageUrls,
           },
         ])
-        .select()
 
       if (error) throw error
-      if (data) {
-        await fetchCars()
-      }
+      await fetchCars()
     } catch (err) {
       console.error("Gabim gjatë shtimit:", err)
-      alert("Gabim gjatë ruajtjes së veturës!")
+      alert("Gabim gjatë ruajtjes!")
     }
   }
 
@@ -136,7 +141,7 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
       await fetchCars()
     } catch (err) {
       console.error("Gabim gjatë përditësimit:", err)
-      alert("Gabim gjatë përditësimit të veturës!")
+      alert("Gabim gjatë përditësimit!")
     }
   }
 
@@ -151,7 +156,6 @@ export function CarStoreProvider({ children }: { children: ReactNode }) {
       setCars((prev) => prev.filter((c) => c.id !== id))
     } catch (err) {
       console.error("Gabim gjatë fshirjes:", err)
-      alert("Gabim gjatë fshirjes!")
     }
   }
 
