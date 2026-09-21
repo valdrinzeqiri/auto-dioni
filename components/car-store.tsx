@@ -1,46 +1,160 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
-import { type Car, defaultCars, loadCars, saveCars } from "@/lib/cars"
+import { type Car } from "@/lib/cars"
+import { supabase } from "@/lib/supabase"
 
 type CarStore = {
   cars: Car[]
   ready: boolean
-  addCar: (car: Omit<Car, "id" | "createdAt">) => void
-  updateCar: (id: string, car: Omit<Car, "id" | "createdAt">) => void
-  deleteCar: (id: string) => void
+  addCar: (car: Omit<Car, "id" | "createdAt">, imageFiles?: File[]) => Promise<void>
+  updateCar: (id: string, car: Omit<Car, "id" | "createdAt">, imageFiles?: File[]) => Promise<void>
+  deleteCar: (id: string) => Promise<void>
 }
 
 const CarStoreContext = createContext<CarStore | null>(null)
 
 export function CarStoreProvider({ children }: { children: ReactNode }) {
-  const [cars, setCars] = useState<Car[]>(defaultCars)
+  const [cars, setCars] = useState<Car[]>([])
   const [ready, setReady] = useState(false)
 
+  // Lexo veturat nga Supabase (tabela dionicars)
+  const fetchCars = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("dionicars")
+        .select("*")
+        .order("created_at", { ascending: false })
+
+      if (error) throw error
+      if (data) {
+        const formattedCars: Car[] = data.map((item: any) => ({
+          id: item.id.toString(),
+          title: item.title,
+          price: item.price,
+          km: item.km,
+          year: item.year,
+          engine: item.engine,
+          desc: item.desc || "",
+          images: item.images || [],
+          createdAt: new Date(item.created_at).getTime(),
+        }))
+        setCars(formattedCars)
+      }
+    } catch (err) {
+      console.error("Gabim gjatë leximit të veturave:", err)
+    } finally {
+      setReady(true)
+    }
+  }
+
   useEffect(() => {
-    setCars(loadCars())
-    setReady(true)
+    fetchCars()
   }, [])
 
-  useEffect(() => {
-    if (ready) saveCars(cars)
-  }, [cars, ready])
+  // Ngarko fotot te bucket-i dioni-images
+  const uploadImages = async (files: File[]): Promise<string[]> => {
+    let imageUrls: string[] = []
+    for (let file of files) {
+      const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`
+      const { error } = await supabase.storage
+        .from("dioni-images")
+        .upload(fileName, file)
 
-  const addCar: CarStore["addCar"] = (data) => {
-    setCars((prev) => [
-      { ...data, id: crypto.randomUUID(), createdAt: Date.now() },
-      ...prev,
-    ])
+      if (error) {
+        console.error("Gabim te upload i fotos:", error.message)
+        continue
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from("dioni-images")
+        .getPublicUrl(fileName)
+
+      if (publicUrlData?.publicUrl) {
+        imageUrls.push(publicUrlData.publicUrl)
+      }
+    }
+    return imageUrls
   }
 
-  const updateCar: CarStore["updateCar"] = (id, data) => {
-    setCars((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, ...data } : c)),
-    )
+  // Shto veturë të re
+  const addCar: CarStore["addCar"] = async (carData, imageFiles = []) => {
+    try {
+      let newImageUrls = carData.images || []
+      if (imageFiles && imageFiles.length > 0) {
+        const uploaded = await uploadImages(imageFiles)
+        newImageUrls = [...newImageUrls, ...uploaded]
+      }
+
+      const { data, error } = await supabase
+        .from("dionicars")
+        .insert([
+          {
+            title: carData.title,
+            price: carData.price,
+            km: carData.km,
+            year: carData.year,
+            engine: carData.engine,
+            desc: carData.desc,
+            images: newImageUrls,
+          },
+        ])
+        .select()
+
+      if (error) throw error
+      if (data) {
+        await fetchCars()
+      }
+    } catch (err) {
+      console.error("Gabim gjatë shtimit:", err)
+      alert("Gabim gjatë ruajtjes së veturës!")
+    }
   }
 
-  const deleteCar: CarStore["deleteCar"] = (id) => {
-    setCars((prev) => prev.filter((c) => c.id !== id))
+  // Përditëso veturën
+  const updateCar: CarStore["updateCar"] = async (id, carData, imageFiles = []) => {
+    try {
+      let existingImages = carData.images || []
+      if (imageFiles && imageFiles.length > 0) {
+        const uploaded = await uploadImages(imageFiles)
+        existingImages = [...existingImages, ...uploaded]
+      }
+
+      const { error } = await supabase
+        .from("dionicars")
+        .update({
+          title: carData.title,
+          price: carData.price,
+          km: carData.km,
+          year: carData.year,
+          engine: carData.engine,
+          desc: carData.desc,
+          images: existingImages,
+        })
+        .eq("id", id)
+
+      if (error) throw error
+      await fetchCars()
+    } catch (err) {
+      console.error("Gabim gjatë përditësimit:", err)
+      alert("Gabim gjatë përditësimit të veturës!")
+    }
+  }
+
+  // Fshi veturën
+  const deleteCar: CarStore["deleteCar"] = async (id) => {
+    try {
+      const { error } = await supabase
+        .from("dionicars")
+        .delete()
+        .eq("id", id)
+
+      if (error) throw error
+      setCars((prev) => prev.filter((c) => c.id !== id))
+    } catch (err) {
+      console.error("Gabim gjatë fshirjes:", err)
+      alert("Gabim gjatë fshirjes!")
+    }
   }
 
   return (
