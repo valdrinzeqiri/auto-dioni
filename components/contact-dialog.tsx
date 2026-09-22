@@ -4,7 +4,7 @@ import { MapPin, Phone, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const WHATSAPP_NUMBER = "38344111148"
-const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Auto+Dioni+Prishtin%C3%AB"
+const MAPS_URL = "https://maps.app.goo.gl/voXJEfN74iXUbAQM7"
 
 export function ContactDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null
