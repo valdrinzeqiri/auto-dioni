@@ -17,22 +17,13 @@ const empty: CarFormValues = {
   images: [],
 }
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
-
 export function CarForm({
   initial,
   onSubmit,
   onCancel,
 }: {
   initial?: Car
-  onSubmit: (values: CarFormValues) => void
+  onSubmit: (values: CarFormValues, imageFiles: File[]) => void
   onCancel: () => void
 }) {
   const [values, setValues] = useState<CarFormValues>(
@@ -48,36 +39,40 @@ export function CarForm({
         }
       : empty,
   )
+  const [imageFiles, setImageFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const set = <K extends keyof CarFormValues>(key: K, value: CarFormValues[K]) =>
     setValues((v) => ({ ...v, [key]: value }))
 
-  const handleFiles = async (files: FileList | null) => {
+  const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return
-    setUploading(true)
-    try {
-      const urls = await Promise.all(Array.from(files).map(fileToDataUrl))
-      set("images", [...values.images, ...urls])
-    } catch (err) {
-      console.log("[v0] Image upload failed:", err)
-    } finally {
-      setUploading(false)
-      if (fileRef.current) fileRef.current.value = ""
-    }
+    const newFiles = Array.from(files)
+    
+    // Ruajmë skedarët realë për t'i dërguar te Supabase
+    setImageFiles((prev) => [...prev, ...newFiles])
+
+    // Krijojmë URL të përkohshme vetëm për t'i shfaqur fotot menjëherë në ekran (Preview)
+    const newPreviews = newFiles.map((file) => URL.createObjectURL(file))
+    set("images", [...values.images, ...newPreviews])
+
+    if (fileRef.current) fileRef.current.value = ""
   }
 
-  const removeImage = (i: number) =>
+  const removeImage = (i: number) => {
     set(
       "images",
       values.images.filter((_, idx) => idx !== i),
     )
+    // Nëse ka skedarë të shtuar nga pajisja, i heqim edhe nga lista e re
+    setImageFiles((prev) => prev.filter((_, idx) => idx !== i))
+  }
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!values.title.trim()) return
-    onSubmit(values)
+    onSubmit(values, imageFiles)
   }
 
   return (
