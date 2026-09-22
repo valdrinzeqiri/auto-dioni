@@ -34,13 +34,25 @@ export function CarCard({ car, onDetails }: { car: Car; onDetails: (car: Car) =>
             <dd className="font-medium text-white/80">{car.year}</dd>
           </div>
           <div className="flex flex-col items-center gap-1 rounded-lg border border-white/10 py-2">
-            {/* Ikona e saktë e Check Engine (e kuqe) */}
+            {/* Ikona e saktë e Check Engine (fiks si në foto, me ngjyrë të kuqe) */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              className="size-4 text-dioni fill-current"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="size-4 text-dioni"
             >
-              <path d="M112 112c-8.8 0-16 7.2-16 16v48H64c-17.7 0-32 14.3-32 32v32c0 17.7 14.3 32 32 32h32v48c0 8.8 7.2 16 16 16s16-7.2 16-16v-48h32c17.7 0 32-14.3 32-32v-32c0-17.7-14.3-32-32-32h-32v-48c0-8.8-7.2-16-16-16zM320 64c-17.7 0-32 14.3-32 32v48H224c-17.7 0-32 14.3-32 32v224c0 17.7 14.3 32 32 32h256c17.7 0 32-14.3 32-32V176c0-17.7-14.3-32-32-32h-64V96c0-17.7-14.3-32-32-32H320zm0 64h96v48h-96v-48zm-64 80h224v224H256V208z" />
+              <path d="M9 3h6v2H9z" />
+              <path d="M11 5v2h2V5" />
+              <path d="M4 9h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9z" />
+              <path d="M2 11h2" />
+              <path d="M20 11h2" />
+              <path d="M2 15h2" />
+              <path d="M20 15h2" />
+              <path d="M9 13h6" />
             </svg>
             <dd className="truncate px-1 font-medium text-white/80">{car.engine}</dd>
           </div>
