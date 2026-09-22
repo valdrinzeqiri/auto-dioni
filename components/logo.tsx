@@ -1,25 +1,25 @@
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <a href="#" className={`flex items-center gap-3 group ${className}`}>
-      {/* Katrori i zi me kornizë të hollë të kuqe */}
-      <div className="relative flex items-center justify-center size-11 rounded-xl bg-black border border-dioni shadow-md transition-all duration-300 group-hover:scale-105">
+      {/* Katrori i zi me kornizë të hollë të kuqe (pak më i gjerë për t'i dhënë proporcionin e duhur) */}
+      <div className="relative flex items-center justify-center size-11 w-14 rounded-xl bg-black border border-dioni shadow-md transition-all duration-300 group-hover:scale-105">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
+          viewBox="0 0 32 24"
           fill="currentColor"
-          className="size-7 text-dioni"
+          className="size-8 w-11 text-dioni"
         >
-          {/* Silueta e saktë e veturës (trupi i kuq) */}
-          <path d="M3 14.5c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5V16c0 1.1-.9 2-2 2h-1c0 1.1-.9 2-2 2s-2-.9-2-2H9c0 1.1-.9 2-2 2s-2-.9-2-2H5c-1.1 0-2-.9-2-2v-1.5z" />
-          <path d="M4.5 13L6 9.5C6.3 8.8 7 8.3 7.8 8.3h8.4c.8 0 1.5.5 1.8 1.2L19.5 13h-15z" />
+          {/* Trupi i shtrirë dhe elegant i veturës */}
+          <path d="M2.5 14.5C2.5 13.7 3.2 13 4 13h24c.8 0 1.5.7 1.5 1.5V16c0 1.1-.9 2-2 2h-1c0 1.1-.9 2-2 2s-2-.9-2-2H9.5c0 1.1-.9 2-2 2s-2-.9-2-2H4.5c-1.1 0-2-.9-2-2v-1.5z" />
+          <path d="M5 13l2.5-4.5c.4-.7 1.1-1.2 2-1.2h12.5c.9 0 1.6.5 2 1.2L27 13H5z" />
           
-          {/* Dritaret (me ngjyrë të zezë për kontrast brendësie) */}
-          <path d="M7.5 9.5h4v3.5h-4z" className="fill-black" />
-          <path d="M12.5 9.5h4l1.2 3.5h-5.2z" className="fill-black" />
+          {/* Dritaret e ndara (më të gjata dhe proporcionale) */}
+          <path d="M9 8.5h5.5V12.5H9z" className="fill-black" />
+          <path d="M16 8.5h6.5l1.5 4H16V8.5z" className="fill-black" />
 
-          {/* Rrotat (të zeza me rreth të jashtëm të kuq) */}
-          <circle cx="7" cy="17" r="2.2" className="fill-black" />
-          <circle cx="17" cy="17" r="2.2" className="fill-black" />
+          {/* Rrotat */}
+          <circle cx="8" cy="17" r="2.2" className="fill-black" />
+          <circle cx="24" cy="17" r="2.2" className="fill-black" />
         </svg>
       </div>
 
