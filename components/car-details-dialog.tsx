@@ -152,7 +152,7 @@ export function CarDetailsDialog({
               Përshkrimi
             </h3>
             <p className="whitespace-pre-line text-pretty leading-relaxed text-white/70">
-              {car.description || "Nuk ka përshkrim."}
+              {car.desc || "Nuk ka përshkrim."}
             </p>
           </div>
 
