@@ -21,7 +21,7 @@ export function Hero() {
           <span className="text-dioni">vetëm një klikim.</span>
         </h1>
         <p className="max-w-2xl text-pretty text-lg text-white/60 md:text-xl">
-          Veturat më të mirëmbajtura, testuar dhe gati për rrugë te Auto Dioni.
+          Vetura të mirëmbajtura, testuara dhe gati për rrugë te Auto Dioni.
         </p>
         <a
           href="#veturat"
