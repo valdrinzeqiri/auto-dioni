@@ -17,6 +17,60 @@ const empty: CarFormValues = {
   images: [],
 }
 
+// Funksion për me kompresu dhe me optimizu foton para se me u ruajt
+async function compressImage(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = (event) => {
+      const img = new Image()
+      img.src = event.target?.result as string
+      img.onload = () => {
+        const canvas = document.createElement("canvas")
+        let width = img.width
+        let height = img.height
+
+        // Zbresim dimensionet maksimale nëse është shumë e madhe (p.sh. max 1200px) mjafton boll për ueb
+        const MAX_WIDTH = 1200
+        const MAX_HEIGHT = 1200
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width)
+            width = MAX_WIDTH
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = Math.round((width * MAX_HEIGHT) / height)
+            height = MAX_HEIGHT
+          }
+        }
+
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext("2d")
+        ctx?.drawImage(img, 0, 0, width, height)
+
+        // Konvertojmë në WebP ose JPEG me cilësi 80% (shumë e pastër, por shumë e lehtë në MB)
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                type: "image/jpeg",
+                lastModified: Date.now(),
+              })
+              resolve(compressedFile)
+            } else {
+              resolve(file)
+            }
+          },
+          "image/jpeg",
+          0.8
+        )
+      }
+    }
+  })
+}
+
 export function CarForm({
   initial,
   onSubmit,
@@ -46,18 +100,33 @@ export function CarForm({
   const set = <K extends keyof CarFormValues>(key: K, value: CarFormValues[K]) =>
     setValues((v) => ({ ...v, [key]: value }))
 
-  const handleFiles = (files: FileList | null) => {
+  const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return
-    const newFiles = Array.from(files)
-    
-    // Ruajmë skedarët realë për t'i dërguar te Supabase
-    setImageFiles((prev) => [...prev, ...newFiles])
+    setUploading(true)
 
-    // Krijojmë URL të përkohshme vetëm për t'i shfaqur fotot menjëherë në ekran (Preview)
-    const newPreviews = newFiles.map((file) => URL.createObjectURL(file))
-    set("images", [...values.images, ...newPreviews])
+    try {
+      const processedFiles: File[] = []
+      const newPreviews: string[] = []
 
-    if (fileRef.current) fileRef.current.value = ""
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        // Kompresojmë secilën foto para se me e shtu
+        const optimizedFile = await compressImage(file)
+        processedFiles.push(optimizedFile)
+
+        // Krijojmë preview që të shfaqet menjëherë
+        const previewUrl = URL.createObjectURL(optimizedFile)
+        newPreviews.push(previewUrl)
+      }
+
+      setImageFiles((prev) => [...prev, ...processedFiles])
+      set("images", [...values.images, ...newPreviews])
+    } catch (err) {
+      console.error("Gabim gjatë përpunimit të fotove:", err)
+    } finally {
+      setUploading(false)
+      if (fileRef.current) fileRef.current.value = ""
+    }
   }
 
   const removeImage = (i: number) => {
@@ -65,7 +134,6 @@ export function CarForm({
       "images",
       values.images.filter((_, idx) => idx !== i),
     )
-    // Nëse ka skedarë të shtuar nga pajisja, i heqim edhe nga lista e re
     setImageFiles((prev) => prev.filter((_, idx) => idx !== i))
   }
 
@@ -146,7 +214,7 @@ export function CarForm({
       </Field>
 
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-white/70">Fotot</span>
+        <span className="text-sm font-medium text-white/70">Fotot {uploading && "(Duke optimizuar fotot...)"}</span>
         <div className="flex flex-wrap gap-3">
           {values.images.map((img, i) => (
             <div
@@ -171,7 +239,7 @@ export function CarForm({
             className="flex size-24 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-white/20 text-white/50 transition-colors hover:border-dioni hover:text-dioni"
           >
             <ImagePlus className="size-6" />
-            <span className="text-xs">{uploading ? "..." : "Shto"}</span>
+            <span className="text-xs">{uploading ? "Duke..." : "Shto"}</span>
           </button>
         </div>
         <input
@@ -185,8 +253,8 @@ export function CarForm({
       </div>
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" className="h-11 flex-1 bg-dioni text-dioni-foreground hover:bg-dioni/90">
-          {initial ? "Ruaj ndryshimet" : "Shto veturën"}
+        <Button type="submit" disabled={uploading} className="h-11 flex-1 bg-dioni text-dioni-foreground hover:bg-dioni/90">
+          {uploading ? "Duke përgatitur fotot..." : initial ? "Ruaj ndryshimet" : "Shto veturën"}
         </Button>
         <Button
           type="button"
