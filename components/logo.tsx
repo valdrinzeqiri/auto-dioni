@@ -1,51 +1,27 @@
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <a href="#" className={`flex items-center gap-3 group ${className}`}>
-      {/* Ikona SVG me dizajnin e saktë nga fotoja */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 200 90"
-        className="h-10 w-auto transition-transform duration-300 group-hover:scale-105"
-        fill="none"
-      >
-        {/* Pjesa e sipërme dhe e pasme e veturës (E kuqe) */}
-        <path
-          d="M25 55C25 55 22 42 35 32C48 22 85 15 125 18C155 20 172 32 185 45C189 49 192 53 192 53C192 53 186 48 178 45C165 40 145 35 120 35C95 35 70 38 50 45C38 49 30 53 25 55Z"
-          fill="#ef4444"
-        />
-        {/* Linja dinamike e xhamit dhe çatisë */}
-        <path
-          d="M42 47C55 35 90 28 125 29C150 30 168 38 180 44"
-          stroke="#ef4444"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
-        {/* Pjesa e pasme/spoileri unik */}
-        <path
-          d="M23 48C23 48 18 53 20 58C21 61 26 56 30 52C28 50 25 49 23 48Z"
-          fill="#ef4444"
-        />
-        <path
-          d="M18 51C22 47 28 45 32 44"
-          stroke="#ef4444"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-        />
-        {/* Harqi i rrotës së pasme (Me ngjyrë të bardhë, në vend të hirit) */}
-        <path
-          d="M38 56C42 48 55 45 68 47"
-          stroke="#ffffff"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
-        {/* Harqi i rrotës së përparme (Me ngjyrë të bardhë, në vend të hirit) */}
-        <path
-          d="M142 47C155 45 168 49 174 57"
-          stroke="#ffffff"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
-      </svg>
+      {/* Katrori i zi me kornizë të hollë të kuqe */}
+      <div className="relative flex items-center justify-center size-11 rounded-xl bg-black border border-dioni shadow-md transition-all duration-300 group-hover:scale-105">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="size-7 text-dioni"
+        >
+          {/* Silueta e saktë e veturës (trupi i kuq) */}
+          <path d="M3 14.5c0-.83.67-1.5 1.5-1.5h15c.83 0 1.5.67 1.5 1.5V16c0 1.1-.9 2-2 2h-1c0 1.1-.9 2-2 2s-2-.9-2-2H9c0 1.1-.9 2-2 2s-2-.9-2-2H5c-1.1 0-2-.9-2-2v-1.5z" />
+          <path d="M4.5 13L6 9.5C6.3 8.8 7 8.3 7.8 8.3h8.4c.8 0 1.5.5 1.8 1.2L19.5 13h-15z" />
+          
+          {/* Dritaret (me ngjyrë të zezë për kontrast brendësie) */}
+          <path d="M7.5 9.5h4v3.5h-4z" className="fill-black" />
+          <path d="M12.5 9.5h4l1.2 3.5h-5.2z" className="fill-black" />
+
+          {/* Rrotat (të zeza me rreth të jashtëm të kuq) */}
+          <circle cx="7" cy="17" r="2.2" className="fill-black" />
+          <circle cx="17" cy="17" r="2.2" className="fill-black" />
+        </svg>
+      </div>
 
       {/* Emri Auto Dioni */}
       <span className="text-2xl font-black tracking-tight">
