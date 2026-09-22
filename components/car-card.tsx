@@ -7,7 +7,10 @@ import { type Car, formatKm, formatPrice } from "@/lib/cars"
 export function CarCard({ car, onDetails }: { car: Car; onDetails: (car: Car) => void }) {
   const cover = car.images[0] ?? "/placeholder.svg"
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition-colors hover:border-dioni/50">
+    <article 
+      onClick={() => onDetails(car)}
+      className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] cursor-pointer transition-all hover:border-dioni/50 hover:bg-white/[0.05]"
+    >
       <div className="relative aspect-[4/3] overflow-hidden bg-black">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -36,8 +39,12 @@ export function CarCard({ car, onDetails }: { car: Car; onDetails: (car: Car) =>
           </div>
         </dl>
         <Button
-          onClick={() => onDetails(car)}
-          className="mt-auto w-full bg-dioni text-dioni-foreground hover:bg-dioni/90 h-10"
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation() // E ndalon thirrjen e dyfishtë nëse klikohet direkt te butoni
+            onDetails(car)
+          }}
+          className="mt-auto w-full bg-dioni text-dioni-foreground hover:bg-dioni/90 h-10 pointer-events-none sm:pointer-events-auto"
         >
           Shiko detajet
         </Button>
