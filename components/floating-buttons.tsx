@@ -2,9 +2,9 @@
 
 import { MapPin } from "lucide-react"
 
-const WHATSAPP_NUMBER = "38344000000"
+const WHATSAPP_NUMBER = "38344111148"
 const WHATSAPP_MSG = encodeURIComponent("Përshëndetje Auto Dioni, jam i interesuar për një veturë.")
-const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Auto+Dioni+Prishtin%C3%AB"
+const MAPS_URL = "https://maps.app.goo.gl/voXJEfN74iXUbAQM7"
 
 export function FloatingButtons() {
   return (
