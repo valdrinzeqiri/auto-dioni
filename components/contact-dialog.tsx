@@ -3,7 +3,7 @@
 import { MapPin, Phone, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-const WHATSAPP_NUMBER = "38344000000"
+const WHATSAPP_NUMBER = "38344111148"
 const MAPS_URL = "https://www.google.com/maps/search/?api=1&query=Auto+Dioni+Prishtin%C3%AB"
 
 export function ContactDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -38,7 +38,7 @@ export function ContactDialog({ open, onClose }: { open: boolean; onClose: () =>
 
         <div className="mt-6 flex flex-col gap-3">
           <a
-            href={`https://wa.me/${383 44 111 148}`}
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-[#25D366]/60"
