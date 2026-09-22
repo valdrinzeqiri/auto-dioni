@@ -1,6 +1,6 @@
 "use client"
 
-import { Calendar, Fuel, Gauge } from "lucide-react"
+import { Calendar, Gauge } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { type Car, formatKm, formatPrice } from "@/lib/cars"
 
@@ -34,7 +34,26 @@ export function CarCard({ car, onDetails }: { car: Car; onDetails: (car: Car) =>
             <dd className="font-medium text-white/80">{car.year}</dd>
           </div>
           <div className="flex flex-col items-center gap-1 rounded-lg border border-white/10 py-2">
-            <Fuel className="size-4 text-dioni" />
+            {/* Ikona e motorit (Check Engine) */}
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="1.75" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="size-4 text-dioni"
+            >
+              <path d="M12 2v4" />
+              <path d="M6 6h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" />
+              <path d="M9 10h6" />
+              <path d="M10 14h4" />
+              <path d="M2 10h2" />
+              <path d="M20 10h2" />
+              <path d="M2 14h2" />
+              <path d="M20 14h2" />
+            </svg>
             <dd className="truncate px-1 font-medium text-white/80">{car.engine}</dd>
           </div>
         </dl>
