@@ -30,7 +30,6 @@ async function compressImage(file: File): Promise<File> {
         let width = img.width
         let height = img.height
 
-        // Zbresim dimensionet maksimale nëse është shumë e madhe (p.sh. max 1200px) mjafton boll për ueb
         const MAX_WIDTH = 1200
         const MAX_HEIGHT = 1200
         if (width > height) {
@@ -50,7 +49,6 @@ async function compressImage(file: File): Promise<File> {
         const ctx = canvas.getContext("2d")
         ctx?.drawImage(img, 0, 0, width, height)
 
-        // Konvertojmë në WebP ose JPEG me cilësi 80% (shumë e pastër, por shumë e lehtë në MB)
         canvas.toBlob(
           (blob) => {
             if (blob) {
@@ -110,12 +108,17 @@ export function CarForm({
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        // Kompresojmë secilën foto para se me e shtu
+        // Kompresojmë secilën foto që të jetë e lehtë në MB
         const optimizedFile = await compressImage(file)
         processedFiles.push(optimizedFile)
 
-        // Krijojmë preview që të shfaqet menjëherë
-        const previewUrl = URL.createObjectURL(optimizedFile)
+        // Përdorim FileReader për me kriju preview bazë që nuk thyhet në galeri
+        const reader = new FileReader()
+        const previewPromise = new Promise<string>((resolve) => {
+          reader.onload = (e) => resolve(e.target?.result as string)
+          reader.readAsDataURL(optimizedFile)
+        })
+        const previewUrl = await previewPromise
         newPreviews.push(previewUrl)
       }
 
