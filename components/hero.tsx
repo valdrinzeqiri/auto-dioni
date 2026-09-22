@@ -13,7 +13,7 @@ export function Hero() {
       />
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-6 px-4 py-20 md:py-28">
         <span className="inline-flex items-center gap-2 rounded-full border border-dioni/40 bg-dioni/10 px-3 py-1 text-xs font-medium text-dioni">
-          <span className="size-1.8 rounded-full bg-dioni" />
+          <span className="size-1.5 rounded-full bg-dioni" />
           Auto Dioni — Prishtinë
         </span>
         <h1 className="max-w-3xl text-balance text-4xl font-extrabold leading-tight tracking-tight text-white md:text-6xl">
