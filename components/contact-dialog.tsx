@@ -38,7 +38,7 @@ export function ContactDialog({ open, onClose }: { open: boolean; onClose: () =>
 
         <div className="mt-6 flex flex-col gap-3">
           <a
-            href={`https://wa.me/${+383 44 111 148}`}
+            href={`https://wa.me/${383 44 111 148}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-[#25D366]/60"
