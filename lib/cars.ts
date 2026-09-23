@@ -11,7 +11,7 @@ export type Car = {
 }
 
 export const STORAGE_KEY = "auto-dioni-cars"
-export const ADMIN_PASSWORD = "admin123"
+export const ADMIN_PASSWORD = "valdet1965"
 
 export const defaultCars: Car[] = [
   {
